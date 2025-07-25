@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybor's Cube 2x - Advanced Rubik's Cube Solver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">Cybor's Cube 2x</h1>
+                <p class="app-subtitle">By Abhishek Tiwary (2025)</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Mode:</span>
+                    <span class="stat-value" id="current-mode">AXHT</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Threads:</span>
+                    <span class="stat-value" id="current-threads">4</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="solver">Solver</button>
+            <button class="nav-tab" data-tab="benchmark">Benchmark</button>
+            <button class="nav-tab" data-tab="settings">Settings</button>
+            <button class="nav-tab" data-tab="about">About</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Solver Tab -->
+            <section class="tab-content active" id="solver-tab">
+                <div class="solver-layout">
+                    <!-- Cube Visualization -->
+                    <div class="cube-container">
+                        <div class="cube-wrapper">
+                            <div class="cube" id="rubiks-cube">
+                                <!-- Front Face -->
+                                <div class="face front" data-face="F">
+                                    <div class="sticker" data-pos="0"></div>
+                                    <div class="sticker" data-pos="1"></div>
+                                    <div class="sticker" data-pos="2"></div>
+                                    <div class="sticker" data-pos="3"></div>
+                                    <div class="sticker" data-pos="4"></div>
+                                    <div class="sticker" data-pos="5"></div>
+                                    <div class="sticker" data-pos="6"></div>
+                                    <div class="sticker" data-pos="7"></div>
+                                    <div class="sticker" data-pos="8"></div>
+                                </div>
+                                <!-- Back Face -->
+                                <div class="face back" data-face="B">
+                                    <div class="sticker" data-pos="0"></div>
+                                    <div class="sticker" data-pos="1"></div>
+                                    <div class="sticker" data-pos="2"></div>
+                                    <div class="sticker" data-pos="3"></div>
+                                    <div class="sticker" data-pos="4"></div>
+                                    <div class="stickers" data-pos="5"></div>
+                                    <div class="sticker" data-pos="6"></div>
+                                    <div class="sticker" data-pos="7"></div>
+                                    <div class="sticker" data-pos="8"></div>
+                                </div>
+                                <!-- Left Face -->
+                                <div class="face left" data-face="L">
+                                    <div class="sticker" data-pos="0"></div>
+                                    <div class="sticker" data-pos="1"></div>
+                                    <div class="sticker" data-pos="2"></div>
+                                    <div class="sticker" data-pos="3"></div>
+                                    <div class="sticker" data-pos="4"></div>
+                                    <div class="sticker" data-pos="5"></div>
+                                    <div class="sticker" data-pos="6"></div>
+                                    <div class="sticker" data-pos="7"></div>
+                                    <div class="sticker" data-pos="8"></div>
+                                </div>
+                                <!-- Right Face -->
+                                <div class="face right" data-face="R">
+                                    <div class="sticker" data-pos="0"></div>
+                                    <div class="sticker" data-pos="1"></div>
+                                    <div class="sticker" data-pos="2"></div>
+                                    <div class="sticker" data-pos="3"></div>
+                                    <div class="sticker" data-pos="4"></div>
+                                    <div class="sticker" data-pos="5"></div>
+                                    <div class="sticker" data-pos="6"></div>
+                                    <div class="sticker" data-pos="7"></div>
+                                    <div class="sticker" data-pos="8"></div>
+                                </div>
+                                <!-- Top Face -->
+                                <div class="face top" data-face="U">
+                                    <div class="sticker" data-pos="0"></div>
+                                    <div class="sticker" data-pos="1"></div>
+                                    <div class="sticker" data-pos="2"></div>
+                                    <div class="sticker" data-pos="3"></div>
+                                    <div class="sticker" data-pos="4"></div>
+                                    <div class="sticker" data-pos="5"></div>
+                                    <div class="sticker" data-pos="6"></div>
+                                    <div class="sticker" data-pos="7"></div>
+                                    <div class="sticker" data-pos="8"></div>
+                                </div>
+                                <!-- Bottom Face -->
+                                <div class="face bottom" data-face="D">
+                                    <div class="sticker" data-pos="0"></div>
+                                    <div class="sticker" data-pos="1"></div>
+                                    <div class="sticker" data-pos="2"></div>
+                                    <div class="sticker" data-pos="3"></div>
+                                    <div class="sticker" data-pos="4"></div>
+                                    <div class="sticker" data-pos="5"></div>
+                                    <div class="sticker" data-pos="6"></div>
+                                    <div class="sticker" data-pos="7"></div>
+                                    <div class="sticker" data-pos="8"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cube-controls">
+                            <button class="btn btn--secondary btn--sm" id="reset-cube">Reset Cube</button>
+                            <button class="btn btn--secondary btn--sm" id="scramble-cube">Scramble</button>
+                        </div>
+                    </div>
+
+                    <!-- Solver Controls -->
+                    <div class="solver-panel">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Cube Input</h3>
+                                <div class="form-group">
+                                    <label class="form-label" for="facecube-input">FACECUBE Notation (54 chars):</label>
+                                    <input type="text" class="form-control" id="facecube-input" 
+                                           placeholder="UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
+                                           maxlength="54">
+                                    <small class="help-text">U=Up(White), R=Right(Red), F=Front(Blue), D=Down(Yellow), L=Left(Orange), B=Back(Green)</small>
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn--primary" id="solve-btn" disabled>Solve Cube</button>
+                                    <button class="btn btn--secondary" id="load-facecube">Load State</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Solution</h3>
+                                <div class="solution-display" id="solution-display">
+                                    <p class="no-solution">No solution generated yet. Click "Solve Cube" to begin.</p>
+                                </div>
+                                <div class="solution-stats hidden" id="solution-stats">
+                                    <div class="stat-grid">
+                                        <div class="stat">
+                                            <span class="stat-label">Moves:</span>
+                                            <span class="stat-value" id="move-count">0</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Time:</span>
+                                            <span class="stat-value" id="solve-time">0ms</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Robot Time:</span>
+                                            <span class="stat-value" id="robot-time">0.0s</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn--primary btn--sm" id="apply-solution" disabled>Apply Solution</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Benchmark Tab -->
+            <section class="tab-content" id="benchmark-tab">
+                <div class="benchmark-layout">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Performance Benchmark</h3>
+                            <div class="benchmark-controls">
+                                <button class="btn btn--primary" id="run-benchmark">Run Benchmark</button>
+                                <div class="benchmark-progress hidden" id="benchmark-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progress-fill"></div>
+                                    </div>
+                                    <span class="progress-text" id="progress-text">0/100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Results</h3>
+                            <div class="benchmark-results" id="benchmark-results">
+                                <table class="results-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Scramble</th>
+                                            <th>Moves</th>
+                                            <th>Time (ms)</th>
+                                            <th>Mode</th>
+                                            <th>Robot Time (s)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="results-tbody">
+                                        <!-- Results will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Statistics</h3>
+                            <div class="stats-grid" id="benchmark-stats">
+                                <div class="stat-card">
+                                    <h4>Average Moves</h4>
+                                    <span class="stat-number" id="avg-moves">--</span>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Average Time</h4>
+                                    <span class="stat-number" id="avg-time">--</span>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Success Rate</h4>
+                                    <span class="stat-number" id="success-rate">--</span>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Best Solution</h4>
+                                    <span class="stat-number" id="best-solution">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section class="tab-content" id="settings-tab">
+                <div class="settings-layout">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Algorithm Mode</h3>
+                            <div class="mode-selection">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="qt-mode" name="mode">
+                                    <span class="checkmark"></span>
+                                    QT Mode (Quarter-turn metric)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="ax-mode" name="mode" checked>
+                                    <span class="checkmark"></span>
+                                    AX Mode (Axial metric - Robot optimized)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="f5-mode" name="mode">
+                                    <span class="checkmark"></span>
+                                    F5 Mode (5-face solving, no B moves)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Solver Parameters</h3>
+                            <div class="parameter-grid">
+                                <div class="parameter-item">
+                                    <label class="form-label">Max Length (-l): <span id="max-length-value">20</span></label>
+                                    <input type="range" class="range-input" id="max-length" min="1" max="30" value="20">
+                                </div>
+                                <div class="parameter-item">
+                                    <label class="form-label">Time Limit (-m): <span id="time-limit-value">100</span>ms</label>
+                                    <input type="range" class="range-input" id="time-limit" min="10" max="10000" value="100" step="10">
+                                </div>
+                                <div class="parameter-item">
+                                    <label class="form-label">Solutions (-n): <span id="num-solutions-value">1</span></label>
+                                    <input type="range" class="range-input" id="num-solutions" min="1" max="10" value="1">
+                                </div>
+                                <div class="parameter-item">
+                                    <label class="form-label">Threads (-t): <span id="thread-count-value">4</span></label>
+                                    <input type="range" class="range-input" id="thread-count" min="1" max="16" value="4">
+                                </div>
+                            </div>
+                            <div class="checkbox-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="compression-mode">
+                                    <span class="checkmark"></span>
+                                    Enable Compression (-c)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Robot Optimizations</h3>
+                            <div class="optimization-info">
+                                <div class="info-item">
+                                    <h4>Axial Benefits</h4>
+                                    <p>15-20% faster execution with parallel face movements</p>
+                                </div>
+                                <div class="info-item">
+                                    <h4>Parallel Moves</h4>
+                                    <p>U+D, R+L, F+B can be executed simultaneously</p>
+                                </div>
+                                <div class="info-item">
+                                    <h4>Turn Cost</h4>
+                                    <p>180° turns ≈ 2× single move execution time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Tab -->
+            <section class="tab-content" id="about-tab">
+                <div class="about-layout">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>About Cybor's Cube 2x</h3>
+                            <p>Cybor's Cube 2x is an extremely efficient Rubik's Cube solving algorithm designed particularly for high-speed robots. Maintained by Abhishek Tiwary (2025), this software represents the cutting edge in Rubik's Cube solving technology.</p>
+                            
+                            <h4>Core Technology</h4>
+                            <p>At its heart, Cybor's Cube 2x is a highly optimized C++ implementation of Herbert Kociemba's two-phase algorithm. It combines the best techniques from several excellent implementations including RubiksCube-TwophaseSolver, min2phase, and cube20src.</p>
+                            
+                            <h4>Key Features</h4>
+                            <ul>
+                                <li><strong>Robot-Optimized Mechanics:</strong> Considers axial robot mechanics with parallel movement capabilities</li>
+                                <li><strong>Multi-Threading:</strong> Supports arbitrary thread counts with 10+ times speed improvements</li>
+                                <li><strong>Multiple Solutions:</strong> Can search for multiple solutions simultaneously</li>
+                                <li><strong>Advanced Metrics:</strong> Supports QT, AX, and F5 solving modes</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Algorithm Information</h3>
+                            <div class="algorithm-info">
+                                <div class="info-row">
+                                    <span class="info-label">Algorithm:</span>
+                                    <span class="info-value">Two-Phase Algorithm</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Developer:</span>
+                                    <span class="info-value">Herbert Kociemba (1991)</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Max Moves:</span>
+                                    <span class="info-value">20 moves</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Average Moves:</span>
+                                    <span class="info-value">18 moves</span>
+                                </div>
+                            </div>
+                            
+                            <h4>Two-Phase Process</h4>
+                            <ol>
+                                <li><strong>Phase 1:</strong> Orient all corners and edges, position UD-slice edges</li>
+                                <li><strong>Phase 2:</strong> Solve remaining cube using restricted move set</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Performance</h3>
+                            <p>Benchmarks run on an AMD Ryzen 5 3600 processor show that Cybor's Cube 2x achieves average solution lengths as low as 14.71 moves in AXHT metric, making it ideal for challenging the official Guinness World Record for the fastest robot to solve a Rubik's Cube.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Command Terminal -->
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <span class="terminal-title">Command Interface</span>
+                <button class="terminal-toggle" id="terminal-toggle">_</button>
+            </div>
+            <div class="terminal-body" id="terminal-body">
+                <div class="terminal-output" id="terminal-output">
+                    <div class="terminal-line">Cybor's Cube 2x Command Interface v2.0</div>
+                    <div class="terminal-line">Type 'help' for available commands</div>
+                </div>
+                <div class="terminal-input-line">
+                    <span class="terminal-prompt">cube2x> </span>
+                    <input type="text" class="terminal-input" id="terminal-input" autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
